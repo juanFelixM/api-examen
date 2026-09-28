@@ -5,9 +5,38 @@
 
 generator client {
   provider = "prisma-client"
-  output   = "../src/generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
+}
+
+model Usuario {
+  id            Int           @id @default(autoincrement())
+  nombre        String
+  email         String        @unique
+  password      String
+  rol           String        @default("socio")
+  inscripciones Inscripcion[]
+}
+
+model Clase {
+  id            Int           @id @default(autoincrement())
+  nombre        String
+  instructor    String
+  horario       DateTime
+  cupoMaximo    Int
+  activa        Boolean       @default(true)
+  inscripciones Inscripcion[]
+}
+
+model Inscripcion {
+  id               Int       @id @default(autoincrement())
+  fechaInscripcion DateTime  @default(now())
+  fechaCancelacion DateTime?
+  estado           String    @default("activa")
+  usuario          Usuario   @relation(fields: [usuarioId], references: [id])
+  usuarioId        Int
+  clase            Clase     @relation(fields: [claseId], references: [id])
+  claseId          Int
 }
